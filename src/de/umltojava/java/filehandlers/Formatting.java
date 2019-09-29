@@ -117,10 +117,21 @@ public class Formatting
         }
 
         name = method.substring(1, method.indexOf("("));
+        params = getParams(method.substring(method.indexOf("(") + 1, method.indexOf(")")));
 
         if(method.lastIndexOf(":") > method.lastIndexOf(")"))
         {
             returnType = method.substring(method.lastIndexOf(": ") + 2);
+
+            if(isGetter(name, returnType))
+            {
+                return getGetter(identifier, returnType, name);
+            }
+            else if(isSetter(name, returnType, params))
+            {
+                return getSetter(identifier, returnType, name, params);
+            }
+
         }
         else
         {
@@ -129,7 +140,6 @@ public class Formatting
                 returnType = "void";
             }
         }
-        params = getParams(method.substring(method.indexOf("(") + 1, method.indexOf(")")));
 
         String methodText = identifier + " " + returnType + " " + name + "(" + params + ")";
         methodText = methodText.replaceAll(" {2,}", " ");
@@ -152,6 +162,103 @@ public class Formatting
         methodText += "\n\t}";
 
         return methodText;
+    }
+
+    private String getSetter(String identifier, String returnType, String name, String params)
+    {
+        String attr = "";
+
+        for(String attribute : this.attributes)
+        {
+            String att     = getAttribute(attribute);
+            String attName = att.substring(att.lastIndexOf(" ") + 1);
+            if(name.equalsIgnoreCase("set" + attName))
+            {
+                attr = attName;
+                break;
+            }
+        }
+
+        String methodText = identifier + " " + returnType + " " + name + "(" + params + ")";
+        methodText = methodText.replaceAll(" {2,}", " ");
+        methodText += "\n\t{";
+        methodText += "\n\t\t";
+        methodText += "this." + attr + " = " + params.substring(params.indexOf(" ") + 1) + ";";
+        methodText += "\n\t}";
+
+        return methodText;
+    }
+
+    private boolean isSetter(String name, String returnType, String params)
+    {
+        boolean isSetter = false;
+
+        if(params.contains(","))
+            return false;
+
+        for(String attr : this.attributes)
+        {
+            String att     = getAttribute(attr);
+            String attName = att.substring(att.lastIndexOf(" ") + 1);
+            String attType = att.substring(att.indexOf(" ") + 1, att.lastIndexOf(" "));
+
+            if(name.equalsIgnoreCase("set" + attName))
+            {
+                if(returnType.equalsIgnoreCase("void"))
+                {
+                    if(params.substring(0, params.indexOf(" ")).equalsIgnoreCase(attType))
+                    {
+                        isSetter = true;
+                    }
+                }
+            }
+        }
+        return isSetter;
+    }
+
+    private String getGetter(String identifier, String returnType, String name)
+    {
+        String attr = "";
+
+        for(String attribute : this.attributes)
+        {
+            String att     = getAttribute(attribute);
+            String attName = att.substring(att.lastIndexOf(" ") + 1);
+            if(name.equalsIgnoreCase("get" + attName))
+            {
+                attr = attName;
+                break;
+            }
+        }
+
+        String methodText = identifier + " " + returnType + " " + name + "()";
+        methodText = methodText.replaceAll(" {2,}", " ");
+        methodText += "\n\t{";
+        methodText += "\n\t\t";
+        methodText += "return this." + attr + ";";
+        methodText += "\n\t}";
+
+        return methodText;
+    }
+
+    private boolean isGetter(String name, String returnType)
+    {
+        boolean isGetter = false;
+        for(String attr : this.attributes)
+        {
+            String att     = getAttribute(attr);
+            String attName = att.substring(att.lastIndexOf(" ") + 1);
+            String attType = att.substring(att.indexOf(" ") + 1, att.lastIndexOf(" "));
+
+            if(name.equalsIgnoreCase("get" + attName))
+            {
+                if(returnType.equalsIgnoreCase(attType))
+                {
+                    isGetter = true;
+                }
+            }
+        }
+        return isGetter;
     }
 
     private String getParams(String substring)
