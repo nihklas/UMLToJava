@@ -1,0 +1,12 @@
+$[package]
+
+public class $[classname]
+{
+
+    $[attributes]
+
+    $[constructor]
+
+    $[methods]
+
+}

@@ -1,0 +1,4 @@
+$[identifier] $[returntype] $[methodname]($[parameter])
+{
+    return $[parametername];
+}

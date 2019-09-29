@@ -1,5 +1,7 @@
 package de.umltojava.java.filehandlers;
 
+import java.io.IOException;
+
 public class Formatting
 {
     private String   template;
@@ -7,6 +9,13 @@ public class Formatting
     private String   packageName;
     private String[] attributes;
     private String[] methods;
+    private String   classTemplate;
+    private String   constructorTemplate;
+    private String   methodsTemplate;
+    private String   getterTemplate;
+    private String   setterTemplate;
+
+    private final String TEMPLATE_PATH = "/src/de/umltojava/java/templates/";
 
     public Formatting(String packageName, String className, String[] attributes, String[] methods)
     {
@@ -33,6 +42,19 @@ public class Formatting
         temp += "\n\n";
         temp += "(methods)\n";
         temp += "\n}";
+
+        try
+        {
+            this.classTemplate = ReadFile.readFile(TEMPLATE_PATH + "class.tmplt");
+            this.constructorTemplate = ReadFile.readFile(TEMPLATE_PATH + "constructor.tmplt");
+            this.methodsTemplate = ReadFile.readFile(TEMPLATE_PATH + "methods.tmplt");
+            this.getterTemplate = ReadFile.readFile(TEMPLATE_PATH + "getter.tmplt");
+            this.setterTemplate = ReadFile.readFile(TEMPLATE_PATH + "setter.tmplt");
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
 
         this.template = temp;
     }
@@ -116,7 +138,7 @@ public class Formatting
                 identifier = "";
         }
 
-        name = method.substring(1, method.indexOf("("));
+        name   = method.substring(1, method.indexOf("("));
         params = getParams(method.substring(method.indexOf("(") + 1, method.indexOf(")")));
 
         if(method.lastIndexOf(":") > method.lastIndexOf(")"))
@@ -194,7 +216,9 @@ public class Formatting
         boolean isSetter = false;
 
         if(params.contains(","))
+        {
             return false;
+        }
 
         for(String attr : this.attributes)
         {
