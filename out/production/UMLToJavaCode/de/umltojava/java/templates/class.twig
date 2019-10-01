@@ -1,0 +1,17 @@
+{% if package|length > 0 -%}
+    package {{ package }};
+{% endif %}
+public class {{ classname }}
+{
+{% for attribute in attributes %}
+    {{ attribute }};
+{%- endfor %}
+
+    public {{ classname }}()
+    {
+
+    }
+{% for method in methods %}
+{{ method }}
+{% endfor %}
+}

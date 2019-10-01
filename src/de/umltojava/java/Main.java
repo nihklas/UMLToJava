@@ -1,9 +1,6 @@
 package de.umltojava.java;
 
-import de.umltojava.java.filehandlers.DocumentHandler;
-import de.umltojava.java.filehandlers.Formatting;
-import de.umltojava.java.filehandlers.ReadFile;
-import de.umltojava.java.filehandlers.WriteFile;
+import de.umltojava.java.filehandlers.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,10 +26,10 @@ public class Main
             String[] fileParts = fileText.split("</ClassNode>");
             String[] classes   = Arrays.copyOf(fileParts, fileParts.length - 1);
 
-            DocumentHandler documentHandler;
-            WriteFile       writeFile;
-            Formatting      formatting;
-            String          packageName = args.length == 3 ? args[2] : "";
+            DocumentHandler    documentHandler;
+            WriteFile          writeFile;
+            TemplateFormatting formatting;
+            String             packageName = args.length == 3 ? args[2] : "";
 
             System.out.println("Start writing " + classes.length + " class files!");
 
@@ -41,7 +38,7 @@ public class Main
                 s = s.replaceAll(regexToDelete, "");
                 documentHandler = new DocumentHandler(s);
                 System.out.println("Writing class: " + documentHandler.getClassName() + "...");
-                formatting = new Formatting(packageName, documentHandler.getClassName(), documentHandler.getAttributes(), documentHandler.getMethods());
+                formatting = new TemplateFormatting(packageName, documentHandler.getClassName(), documentHandler.getAttributes(), documentHandler.getMethods());
                 writeFile = new WriteFile(documentHandler.getClassName(), ".java", path);
                 writeFile.writeFile(formatting.getFileText());
                 System.out.println("Finished Writing class: " + documentHandler.getClassName() + "!");

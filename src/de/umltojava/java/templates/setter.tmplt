@@ -1,4 +1,0 @@
-$[identifier] $[returntype] $[methodname]($[parameter])
-{
-    this.$[attribute] = $[parametername];
-}
